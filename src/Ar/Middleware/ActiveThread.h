@@ -45,7 +45,7 @@ namespace Ar {
             static SharedPtr<ActiveThread> create();
 
             ActiveThread();
-            ~ActiveThread();
+            virtual ~ActiveThread();
 
             void start(const std::string &name);
             void stop();
@@ -68,7 +68,7 @@ namespace Ar {
             const std::string& name() const;
             
         protected:
-            void initializeActiveObject(ActiveObject *ao);
+            virtual void initializeActiveObject(ActiveObject *ao);
             void sendToMe(IMessage *message);
             SharedPtr<ActiveThreadCore>& core();
             bool dispatch(IMessage *message);
