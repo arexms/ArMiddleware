@@ -1,0 +1,6 @@
+build/
+
+!build/README.md
+!build/generateAndSubmitCoverallsReport.sh
+
+.vscode/
