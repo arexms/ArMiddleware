@@ -49,5 +49,5 @@ matrix:
         - export CXX=clang++-3.8
 
 script:
-  - ( cd build && cmake -DCMAKE_CXX_COMPILER=$COMPILER ../ && make VERBOSE=yes && make runTests && cd .. )
+  - ( cd build && cmake -DCMAKE_CXX_COMPILER=$COMPILER ../ && make -j VERBOSE=yes && make runTests && cd .. )
   
