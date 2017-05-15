@@ -75,16 +75,7 @@ namespace Ar { namespace Middleware
                 auto mc = mc_since_epoch.count() % 1000000;
 
             std::stringstream ss;
-#define STRING2(x) #x
-#define STRING(x) STRING2(x)
-
-#pragma message(STRING(__cplusplus))
-
-#if __cplusplus >= 201103L      // does not wotk with older iomanip header - no std::put_time      
             ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X") << ":" << mc;
-#else
-            ss << "0000-00-00" << ":" << mc;
-#endif // __cplusplus >= 201103L
             std::string now = ss.str();
 
         std::string	temp = std::string( "[" ) + now + "][" + LogLevelStr[ _level ] + "][" + _prefix + "]" + " " + _prologue.prologue + str + "\n";
