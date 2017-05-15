@@ -44,8 +44,7 @@ matrix:
         - CXX=clang++-3.8
         - CC=clang-3.8
       before_script:
-        - ls /usr/include/c++
-        - cat /usr/include/c++/5/iomanip
+        - cat /usr/include/c++/*/iomanip
         - export CC=clang-3.8
         - export CXX=clang++-3.8
 
