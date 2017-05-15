@@ -57,6 +57,6 @@ namespace Ar { namespace Middleware
                 .Times(1);
 
         mockActiveObject.attachAndInitialize(&activeThread);
-
+        activeThread.stop();
     }
 } }
