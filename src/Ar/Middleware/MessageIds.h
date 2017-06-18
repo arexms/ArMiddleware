@@ -7,6 +7,7 @@ namespace Ar {
         {
             BASE                        = 0,
             LAMBDA_MESSAGE              = 1,
+            TEST_MESSAGE                = 2,
             END
         };
     }
