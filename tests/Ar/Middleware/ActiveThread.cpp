@@ -11,17 +11,21 @@ namespace Ar { namespace Middleware
     class TestMessage : public IMessage
     {
     public:
-        static MessageId MSG_ID() { return MessageId::TEST_MESSAGE; }
-        virtual MessageId id() { return  MessageId::TEST_MESSAGE; } 
+        class Response : public IMessage::IResponse
+        {
+        public:
+            RESPONSE(MessageId::TEST_MESSAGE_RESPONSE)
+        };
+
+        MESSAGE(MessageId::TEST_MESSAGE)
     };
 
     class ActiveObjectForTests : public ActiveObject
     {
     public:
         ActiveObjectForTests()
-        : ActiveObject("aoForTest")
+            : ActiveObject("aoForTest")
         {
-
         }
 
         virtual void initialize() override
@@ -31,6 +35,50 @@ namespace Ar { namespace Middleware
 
         virtual void getMessage(TestMessage *) {}
         virtual void forLambda() {}
+    };
+
+    class ActiveObjectForTestsWithWait : public ActiveObject
+    {
+        bool _sendResponse = true;
+    public:
+        ActiveObjectForTestsWithWait(const std::string &name, bool sendResponse)
+            : ActiveObject(name)
+            , _sendResponse(sendResponse)
+        {
+        }
+
+        virtual void initialize() override
+        {
+            at()->registerReceiverForMessage(this, &ActiveObjectForTestsWithWait::receivedMessage);
+        }
+
+        virtual void receivedMessage(TestMessage *msg)
+        {
+            auto response = msg->createResponse();
+            if(_sendResponse)
+            {
+                at()->sendTo(response->to, response);
+            }
+        }
+
+        virtual void sentAndWaitForResponse(ActiveThread *at_)
+        {
+            TestMessage *tm = safeNew<TestMessage>();
+            at()->sendTo(at_, tm);
+            at()->waitForResponseFor<TestMessage>(
+                [&](TestMessage::Response *)
+                {
+                    received();
+                },
+                [&]()
+                {
+                    noResponse();
+                }
+            );
+        }
+        virtual void received() {}
+        virtual void noResponse() {}
+
     private:
     };
 
@@ -38,7 +86,18 @@ namespace Ar { namespace Middleware
     {
     public:
         MOCK_METHOD0( forLambda, void () );
+        MOCK_METHOD0( received, void () );
+        MOCK_METHOD0( noResponse, void () );
         MOCK_METHOD1( getMessage, void (TestMessage *msg) );
+    };
+
+    class MockActiveObjectForTestsWithWait : public ActiveObjectForTestsWithWait
+    {
+    public:
+        using ActiveObjectForTestsWithWait::ActiveObjectForTestsWithWait;
+
+        MOCK_METHOD0( received, void () );
+        MOCK_METHOD0( noResponse, void () );
     };
 
     class ActiveThreadTest : public testing::Test
@@ -155,6 +214,58 @@ namespace Ar { namespace Middleware
 
         TestMessage *tm = safeNew<TestMessage>();
         _at2.sendTo("none_at", tm);
+
+        sleep(1);
+        _at1.stop();
+        _at2.stop();
+    }
+
+    TEST_F(ActiveThreadTest, WaitForResponseWithSuccess)
+    {
+        _at1.start("at1");
+        _at2.start("at2");
+
+        MockActiveObjectForTestsWithWait ao1{"ao1", true};
+        MockActiveObjectForTestsWithWait ao2{"ao2", true};
+        EXPECT_CALL(ao1, received())
+                .Times(1);
+        EXPECT_CALL(ao1, noResponse())
+                .Times(0);
+
+        ao1.attachAndInitialize(&_at1);
+        ao2.attachAndInitialize(&_at2);
+
+        _at1.executeWithin(&_at1,
+        [&]()
+        {
+            ao1.sentAndWaitForResponse(&_at2);
+        });
+
+        sleep(1);
+        _at1.stop();
+        _at2.stop();
+    }
+
+    TEST_F(ActiveThreadTest, WaitForResponseWithFail)
+    {
+        _at1.start("at1");
+        _at2.start("at2");
+
+        MockActiveObjectForTestsWithWait ao1{"ao1", false};
+        MockActiveObjectForTestsWithWait ao2{"ao1", false};
+        EXPECT_CALL(ao1, received())
+                .Times(0);
+        EXPECT_CALL(ao1, noResponse())
+                .Times(1);
+
+        ao1.attachAndInitialize(&_at1);
+        ao2.attachAndInitialize(&_at2);
+
+        _at1.executeWithin(&_at1,
+        [&]()
+        {
+            ao1.sentAndWaitForResponse(&_at2);
+        });
 
         sleep(1);
         _at1.stop();
