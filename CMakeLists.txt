@@ -6,7 +6,7 @@ project(ArMiddleware)
 # Configuration
 #
 #-------------------------------------------------------------------------------
-
+add_subdirectory(json)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 add_definitions("-g -O0 -Wall -W -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -pthread -std=c++14")
@@ -22,6 +22,7 @@ endif()
 #-------------------------------------------------------------------------------
 
 include_directories(src)
+include_directories(json/src)
 FILE(GLOB_RECURSE SOURCES_LIST src/*.cpp)
 add_library(armiddleware ${SOURCES_LIST})
 
