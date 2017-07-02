@@ -22,6 +22,7 @@ namespace Ar {
             virtual ~ActiveThreadCore();
             void start();
             void stop();
+            bool isStopped() const;
             bool sendToMe(IMessage *message);
             virtual IMessage* waitFor(MessageId id);
 
@@ -45,6 +46,11 @@ namespace Ar {
         };
 
         // IMPLEMENTATION
+        inline bool ActiveThreadCore::isStopped() const
+        {
+            return _stop == true;
+        }
+
         inline ActiveThread* ActiveThreadCore::at()
         {
             return _at;

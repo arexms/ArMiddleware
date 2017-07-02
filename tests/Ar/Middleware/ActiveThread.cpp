@@ -123,8 +123,6 @@ namespace Ar { namespace Middleware
         _at2.sendTo(at1.get(), tm);
 
         sleep(1);
-        at1->stop();
-        _at2.stop();
     }
 
     TEST_F(ActiveThreadTest, SendToByName)
@@ -142,8 +140,6 @@ namespace Ar { namespace Middleware
         _at2.sendTo("at1", tm);
 
         sleep(1);
-        _at1.stop();
-        _at2.stop();
     }
 
     TEST_F(ActiveThreadTest, ExecuteWithinByPointer)
@@ -160,8 +156,6 @@ namespace Ar { namespace Middleware
         _at2.executeWithin(&_at1, [&ao](){ao.forLambda();});
 
         sleep(1);
-        _at1.stop();
-        _at2.stop();
     }
 
     TEST_F(ActiveThreadTest, ExecuteWithinByName)
@@ -178,8 +172,6 @@ namespace Ar { namespace Middleware
         _at2.executeWithin("at1", [&ao](){ao.forLambda();});
 
         sleep(1);
-        _at1.stop();
-        _at2.stop();
     }
 
     TEST_F(ActiveThreadTest, SendToNotExecutedIfAoDoesNotBelongToGivenAt)
@@ -197,8 +189,6 @@ namespace Ar { namespace Middleware
         _at2.sendTo("at2", tm);
 
         sleep(1);
-        _at1.stop();
-        _at2.stop();
     }
 
     TEST_F(ActiveThreadTest, SendToNotExecutedIfGivenAtNotExist)
@@ -216,8 +206,6 @@ namespace Ar { namespace Middleware
         _at2.sendTo("none_at", tm);
 
         sleep(1);
-        _at1.stop();
-        _at2.stop();
     }
 
     TEST_F(ActiveThreadTest, WaitForResponseWithSuccess)
@@ -242,8 +230,6 @@ namespace Ar { namespace Middleware
         });
 
         sleep(1);
-        _at1.stop();
-        _at2.stop();
     }
 
     TEST_F(ActiveThreadTest, WaitForResponseWithFail)

@@ -35,7 +35,7 @@ namespace Ar { namespace Middleware
 
     void ActiveThread::stop()
     {
-        if(!_core.isEmpty())
+        if(!_core.isEmpty() && !_core->isStopped())
         {
             log().debug("stop() stopping");
             ActiveThreadAddresses::getInstance().remove(this->name());
