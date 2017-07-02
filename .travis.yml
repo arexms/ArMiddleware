@@ -37,9 +37,11 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
+            - kalakris-cmake
           packages:
             - g++-5
             - clang-3.8
+            - cmake
       env:
         - COMPILER=clang++-3.8
         - CXX=clang++-3.8

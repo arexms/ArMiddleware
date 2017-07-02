@@ -3,7 +3,7 @@
 echo "Capturing..."
 lcov --directory . --capture --output-file coverage.info
 echo "Removing unnecessary files..."
-lcov --remove coverage.info 'tests/*' '/usr/include/*'  'googletest/*' --output-file coverage.info
+lcov --remove coverage.info 'tests/*' '/usr/include/*' 'googletest/*' 'json/*' --output-file coverage.info
 echo "Listing..."
 lcov --list coverage.info
 echo "Submitting..."
