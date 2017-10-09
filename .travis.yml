@@ -31,24 +31,22 @@ matrix:
         - (cd build && bash generateAndSubmitCoverallsReport.sh && cd ..)
     - compiler: clang
       sudo: required
-      dist: precise
+      dist: trusty
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
-            - kalakris-cmake
+            - llvm-toolchain-trusty-4.0
           packages:
             - g++-5
-            - clang-3.8
-            - cmake
+            - clang-4.0
       env:
-        - COMPILER=clang++-3.8
-        - CXX=clang++-3.8
-        - CC=clang-3.8
+        - COMPILER=clang++-4.0
+        - CXX=clang++-4.0
+        - CC=clang-4.0
       before_script:
-        - export CC=clang-3.8
-        - export CXX=clang++-3.8
+        - export CC=clang-4.0
+        - export CXX=clang++-4.0
 
 script:
   - ( cd build && cmake -DCMAKE_CXX_COMPILER=$COMPILER ../ && make -j VERBOSE=yes && make runTests && cd .. )
